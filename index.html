@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+<pre id="ascii-art"></pre>
+<script>
+    function pixelToAscii(pixel) {
+        if (pixel < 110) {
+            return '*';
+        } else {
+            return ' ';
+        }
+    }
+    function convertToAscii() {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        const image = new Image();
+        image.src = 'image.svg';
+        image.onload = function () {
+            canvas.width = image.width;
+            canvas.height = image.height;
+            context.drawImage(image, 0, 0);
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+            let asciiArt = '';
+            for (let y = 0; y < canvas.height; y++) {
+                for (let x = 0; x < canvas.width; x++) {
+                    const index = (y * canvas.width + x) * 4;
+                    const gray = imageData.data[index] * 0.3 + imageData.data[index + 1] * 0.59 + imageData.data[index + 2] * 0.11;
+                    asciiArt += pixelToAscii(gray);
+                }
+                asciiArt += '\n';
+            }
+            document.getElementById('ascii-art').innerText = asciiArt;
+        };
+    }
+    window.onload = convertToAscii;
+</script>
+</body>
+</html>
